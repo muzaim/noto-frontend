@@ -17,3 +17,12 @@ export type DraggedBlock = {
 	noteId: string;
 	blockId: string;
 };
+
+export type PendingDelete =
+	| { type: "note"; noteId: string; title: string }
+	| { type: "block"; noteId: string; blockId: string };
+
+export type PendingBlockForm = {
+	noteId: string;
+	type: BlockType;
+};

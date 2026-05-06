@@ -16,12 +16,12 @@ type NoteCardProps = {
 	onDragStart: (
 		event: DragEvent<HTMLElement>,
 		noteId: string,
-		blockId: string,
+		blockId: string
 	) => void;
 	onDrop: (
 		event: DragEvent<HTMLElement>,
 		noteId: string,
-		blockId: string,
+		blockId: string
 	) => void;
 	onFocusTextBlock: (id: string) => void;
 	onFormatText: (command: "bold" | "italic" | "underline") => void;
@@ -29,11 +29,15 @@ type NoteCardProps = {
 		event: KeyboardEvent<HTMLElement>,
 		noteId: string,
 		block: Block,
-		index: number,
+		index: number
 	) => void;
 	onRef: (id: string, element: HTMLElement | null) => void;
 	onToggleBlockMenu: (noteId: string) => void;
-	onUpdateBlock: (noteId: string, blockId: string, data: Partial<Block>) => void;
+	onUpdateBlock: (
+		noteId: string,
+		blockId: string,
+		data: Partial<Block>
+	) => void;
 	onUpdateTitle: (noteId: string, title: string) => void;
 };
 
@@ -62,7 +66,9 @@ export default function NoteCard({
 				<div className="flex items-start justify-between gap-3">
 					<input
 						value={note.title}
-						onChange={(event) => onUpdateTitle(note.id, event.target.value)}
+						onChange={(event) =>
+							onUpdateTitle(note.id, event.target.value)
+						}
 						className="w-full bg-transparent text-2xl font-semibold tracking-normal text-slate-950 outline-none placeholder:text-slate-300"
 						placeholder="Judul note..."
 					/>
@@ -86,24 +92,30 @@ export default function NoteCard({
 			</div>
 
 			<div className="space-y-3">
-				{note.blocks.map((block, index) => (
-					<BlockItem
-						key={block.id}
-						block={block}
-						draggedBlock={draggedBlock}
-						index={index}
-						noteId={note.id}
-						onDeleteBlock={onDeleteBlock}
-						onDragEnd={onDragEnd}
-						onDragOver={onDragOver}
-						onDragStart={onDragStart}
-						onDrop={onDrop}
-						onFocusTextBlock={onFocusTextBlock}
-						onKeyDown={onKeyDown}
-						onRef={onRef}
-						onUpdateBlock={onUpdateBlock}
-					/>
-				))}
+				{note.blocks.length === 0 ? (
+					<div className="text-sm text-gray-400 italic py-3 text-center">
+						Tidak ada block
+					</div>
+				) : (
+					note.blocks.map((block, index) => (
+						<BlockItem
+							key={block.id}
+							block={block}
+							draggedBlock={draggedBlock}
+							index={index}
+							noteId={note.id}
+							onDeleteBlock={onDeleteBlock}
+							onDragEnd={onDragEnd}
+							onDragOver={onDragOver}
+							onDragStart={onDragStart}
+							onDrop={onDrop}
+							onFocusTextBlock={onFocusTextBlock}
+							onKeyDown={onKeyDown}
+							onRef={onRef}
+							onUpdateBlock={onUpdateBlock}
+						/>
+					))
+				)}
 			</div>
 		</article>
 	);

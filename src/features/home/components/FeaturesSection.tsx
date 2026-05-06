@@ -4,7 +4,7 @@ export default function FeaturesSection() {
 	return (
 		<section className="bg-white">
 			<div className="mx-auto w-full max-w-6xl px-6 py-16">
-				<div className="max-w-2xl">
+				<div className="max-w-3xl">
 					<p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-600">
 						Kenapa Noto
 					</p>
@@ -19,7 +19,6 @@ export default function FeaturesSection() {
 							key={feature.title}
 							className="rounded-2xl border border-sky-100 bg-sky-50 p-5"
 						>
-							<div className="mb-5 h-10 w-10 rounded-full bg-white ring-1 ring-sky-100" />
 							<h3 className="text-lg font-semibold text-slate-950">
 								{feature.title}
 							</h3>

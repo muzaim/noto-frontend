@@ -2,7 +2,7 @@ import type { Block, BlockType, Note } from "../types";
 
 export const createBlock = (
 	type: BlockType = "text",
-	data: Partial<Omit<Block, "id" | "type">> = {},
+	data: Partial<Omit<Block, "id" | "type">> = {}
 ): Block => ({
 	id: crypto.randomUUID(),
 	type,
@@ -12,7 +12,7 @@ export const createBlock = (
 
 export const createNote = (
 	title = "Untitled note",
-	blocks = [createBlock()],
+	blocks: Block[] = []
 ): Note => ({
 	id: crypto.randomUUID(),
 	title,

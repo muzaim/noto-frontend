@@ -18,6 +18,6 @@ export const features = [
 
 export const steps = [
 	"Login ke workspace",
-	"Buat halaman baru",
+	"Buat note baru",
 	"Mulai susun ide",
 ];

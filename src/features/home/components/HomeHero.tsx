@@ -12,21 +12,21 @@ export default function HomeHero() {
 					Catat ide, susun tulisan, dan lanjutkan kapan saja.
 				</h1>
 				<p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-					Noto adalah workspace sederhana bergaya Notion untuk mulai menulis
-					tanpa banyak distraksi.
+					Noto adalah workspace sederhana bergaya Notion untuk mulai
+					menulis tanpa banyak distraksi.
 				</p>
 				<div className="mt-8 flex flex-wrap gap-3">
 					<Link
 						to="/login"
 						className="rounded-full bg-sky-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-600"
 					>
-						Mulai menulis
+						Coba gratis
 					</Link>
 					<a
 						href="#preview"
 						className="rounded-full border border-sky-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-sky-100"
 					>
-						Lihat preview
+						Lihat
 					</a>
 				</div>
 			</div>

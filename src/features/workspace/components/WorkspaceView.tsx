@@ -9,21 +9,20 @@ import { LogOut, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppHeader from "../../../components/layout/AppHeader";
 import { logout } from "../../auth/authApi";
-import type { Block, BlockType, DraggedBlock, Note } from "../types";
+import type {
+	Block,
+	BlockType,
+	DraggedBlock,
+	Note,
+	PendingDelete,
+	PendingBlockForm,
+} from "../types";
 import { createBlock, createNote } from "../lib/noteFactory";
 import { getSavedNotes, saveNotes } from "../lib/noteStorage";
 import AddBlockModal from "./AddBlockModal";
+import AddNoteModal from "./AddNoteModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import NoteCard from "./NoteCard";
-
-type PendingDelete =
-	| { type: "note"; noteId: string; title: string }
-	| { type: "block"; noteId: string; blockId: string };
-
-type PendingBlockForm = {
-	noteId: string;
-	type: BlockType;
-};
 
 export default function WorkspaceView() {
 	const navigate = useNavigate();
@@ -42,6 +41,7 @@ export default function WorkspaceView() {
 		useState<PendingBlockForm | null>(null);
 	const fieldRefs = useRef<Record<string, HTMLElement | null>>({});
 	const nextFocusId = useRef<string | null>(null);
+	const [isOpenNoteModal, setIsOpenNoteModal] = useState(false);
 
 	useEffect(() => {
 		saveNotes(notes);
@@ -89,10 +89,10 @@ export default function WorkspaceView() {
 		);
 	};
 
-	const addNote = () => {
-		const newNote = createNote(`New note ${notes.length + 1}`);
-		nextFocusId.current = newNote.blocks[0].id;
-		setNotes((currentNotes) => [newNote, ...currentNotes]);
+	const handleCreateNote = (title: string) => {
+		const newNote = createNote(title);
+		setNotes((current) => [newNote, ...current]);
+		setIsOpenNoteModal(false);
 	};
 
 	const requestDeleteNote = (noteId: string) => {
@@ -158,8 +158,7 @@ export default function WorkspaceView() {
 
 				return {
 					...note,
-					blocks:
-						nextBlocks.length > 0 ? nextBlocks : [createBlock()],
+					blocks: nextBlocks,
 				};
 			})
 		);
@@ -285,7 +284,7 @@ export default function WorkspaceView() {
 
 	const handleLogout = async () => {
 		await logout();
-		navigate("/login");
+		navigate("/");
 	};
 
 	return (
@@ -335,7 +334,7 @@ export default function WorkspaceView() {
 					</div>
 					<button
 						type="button"
-						onClick={addNote}
+						onClick={() => setIsOpenNoteModal(true)}
 						className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-600 md:w-auto"
 					>
 						<Plus size={17} />
@@ -407,6 +406,14 @@ export default function WorkspaceView() {
 						);
 						setPendingBlockForm(null);
 					}}
+				/>
+			)}
+
+			{isOpenNoteModal && (
+				<AddNoteModal
+					isOpen={isOpenNoteModal}
+					onClose={() => setIsOpenNoteModal(false)}
+					onSubmit={handleCreateNote}
 				/>
 			)}
 		</main>
