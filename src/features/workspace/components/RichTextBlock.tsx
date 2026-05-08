@@ -16,15 +16,7 @@ type RichTextBlockProps = {
 	onUpdate: (noteId: string, blockId: string, data: Partial<Block>) => void;
 };
 
-export default function RichTextBlock({
-	block,
-	index,
-	noteId,
-	onFocus,
-	onKeyDown,
-	onRef,
-	onUpdate,
-}: RichTextBlockProps) {
+export default function RichTextBlock({ block, onRef }: RichTextBlockProps) {
 	const editorRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
@@ -49,18 +41,9 @@ export default function RichTextBlock({
 
 				onRef(block.id, element);
 			}}
-			contentEditable
+			contentEditable={false}
 			suppressContentEditableWarning
-			onFocus={() => onFocus(block.id)}
-			onInput={(event) =>
-				onUpdate(noteId, block.id, {
-					content: JSON.stringify({
-						text: event.currentTarget.innerText,
-					}),
-				})
-			}
-			onKeyDown={(event) => onKeyDown(event, noteId, block, index)}
-			className="min-h-10 w-full rounded-xl px-1 py-2 text-base leading-7 text-slate-800 outline-none empty:before:text-slate-300 empty:before:content-[attr(data-placeholder)]"
+			className="min-h-10 w-full rounded-xl px-1 py-2 text-base leading-7 text-slate-800"
 			data-placeholder="Tulis paragraf..."
 		/>
 	);

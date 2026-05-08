@@ -17,13 +17,18 @@ import type {
 	PendingDelete,
 	PendingBlockForm,
 } from "../types";
-import { createBlock, createNote } from "../lib/noteFactory";
-// import { saveNotes } from "../lib/noteStorage";
+import { createNote } from "../lib/noteFactory";
 import AddBlockModal from "./AddBlockModal";
 import AddNoteModal from "./AddNoteModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import NoteCard from "./NoteCard";
 import { deleteNoteApi, getNotesApi } from "../../auth/notesApi";
+import {
+	createBlockApi,
+	deleteBlockApi,
+	reorderBlockApi,
+	type CreateBlockPayload,
+} from "../../auth/blockApi";
 
 export default function WorkspaceView() {
 	const navigate = useNavigate();
@@ -112,29 +117,29 @@ export default function WorkspaceView() {
 		});
 	};
 
-	const addBlock = (
+	const addBlock = async (
 		noteId: string,
+		content: string,
 		type: BlockType = "text",
-		afterIndex?: number,
-		data: Partial<Block> = {},
+		checked?: boolean,
 	) => {
-		const newBlock = createBlock(type, data);
-		nextFocusId.current = newBlock.id;
-		setOpenBlockMenuNoteId(null);
+		try {
+			const payload: CreateBlockPayload = {
+				noteId,
+				type,
+				content,
+			};
 
-		setNotes((currentNotes) =>
-			currentNotes.map((note) => {
-				if (note.id !== noteId) {
-					return note;
-				}
+			if (type === "checklist") {
+				payload.checked = checked;
+			}
 
-				const nextBlocks = [...note.blocks];
-				const insertIndex = afterIndex ?? note.blocks.length - 1;
-				nextBlocks.splice(insertIndex + 1, 0, newBlock);
+			await createBlockApi(payload);
 
-				return { ...note, blocks: nextBlocks };
-			}),
-		);
+			setOpenBlockMenuNoteId(null);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	const openAddBlockForm = (noteId: string, type: BlockType) => {
@@ -146,25 +151,6 @@ export default function WorkspaceView() {
 		setPendingDelete({ type: "block", noteId, blockId });
 	};
 
-	const deleteBlock = (noteId: string, blockId: string) => {
-		setNotes((currentNotes) =>
-			currentNotes.map((note) => {
-				if (note.id !== noteId) {
-					return note;
-				}
-
-				const nextBlocks = note.blocks.filter(
-					(block) => block.id !== blockId,
-				);
-
-				return {
-					...note,
-					blocks: nextBlocks,
-				};
-			}),
-		);
-	};
-
 	const confirmDelete = async () => {
 		if (!pendingDelete) {
 			return;
@@ -173,14 +159,8 @@ export default function WorkspaceView() {
 		try {
 			if (pendingDelete.type === "note") {
 				await deleteNoteApi(pendingDelete.noteId);
-
-				setNotes((currentNotes) =>
-					currentNotes.filter(
-						(note) => note.id !== pendingDelete.noteId,
-					),
-				);
 			} else {
-				deleteBlock(pendingDelete.noteId, pendingDelete.blockId);
+				await deleteBlockApi(pendingDelete.blockId);
 			}
 
 			setPendingDelete(null);
@@ -192,21 +172,16 @@ export default function WorkspaceView() {
 		event: KeyboardEvent<HTMLElement>,
 		noteId: string,
 		block: Block,
-		index: number,
 	) => {
 		if (event.key !== "Enter" || event.shiftKey || block.type === "code") {
 			return;
 		}
 
 		event.preventDefault();
-		addBlock(
-			noteId,
-			block.type === "checklist" ? "checklist" : "text",
-			index,
-		);
+		addBlock(noteId, block.type === "checklist" ? "checklist" : "text");
 	};
 
-	const moveBlock = (targetNoteId: string, targetBlockId: string) => {
+	const moveBlock = async (targetNoteId: number, targetBlockId: number) => {
 		if (
 			!draggedBlock ||
 			draggedBlock.noteId !== targetNoteId ||
@@ -215,30 +190,40 @@ export default function WorkspaceView() {
 			return;
 		}
 
-		setNotes((currentNotes) =>
-			currentNotes.map((note) => {
-				if (note.id !== targetNoteId) {
-					return note;
-				}
+		const note = notes.find((note) => note.id === targetNoteId);
 
-				const draggedIndex = note.blocks.findIndex(
-					(block) => block.id === draggedBlock.blockId,
-				);
-				const targetIndex = note.blocks.findIndex(
-					(block) => block.id === targetBlockId,
-				);
+		if (!note) {
+			return;
+		}
 
-				if (draggedIndex < 0 || targetIndex < 0) {
-					return note;
-				}
-
-				const nextBlocks = [...note.blocks];
-				const [movedBlock] = nextBlocks.splice(draggedIndex, 1);
-				nextBlocks.splice(targetIndex, 0, movedBlock);
-
-				return { ...note, blocks: nextBlocks };
-			}),
+		const draggedIndex = note.blocks.findIndex(
+			(block) => block.id === draggedBlock.blockId,
 		);
+
+		const targetIndex = note.blocks.findIndex(
+			(block) => block.id === targetBlockId,
+		);
+
+		if (draggedIndex < 0 || targetIndex < 0) {
+			return;
+		}
+
+		const nextBlocks = [...note.blocks];
+
+		const [movedBlock] = nextBlocks.splice(draggedIndex, 1);
+
+		nextBlocks.splice(targetIndex, 0, movedBlock);
+
+		try {
+			await reorderBlockApi({
+				items: nextBlocks.map((block, index) => ({
+					id: block.id,
+					orderIndex: index,
+				})),
+			});
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	const handleBlockDragStart = (
@@ -409,10 +394,11 @@ export default function WorkspaceView() {
 					onSubmit={(data) => {
 						addBlock(
 							pendingBlockForm.noteId,
+							data.content,
 							pendingBlockForm.type,
-							undefined,
-							data,
+							data.checked,
 						);
+
 						setPendingBlockForm(null);
 					}}
 				/>
