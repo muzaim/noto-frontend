@@ -181,7 +181,7 @@ export default function WorkspaceView() {
 		addBlock(noteId, block.type === "checklist" ? "checklist" : "text");
 	};
 
-	const moveBlock = async (targetNoteId: number, targetBlockId: number) => {
+	const moveBlock = async (targetNoteId: string, targetBlockId: string) => {
 		if (
 			!draggedBlock ||
 			draggedBlock.noteId !== targetNoteId ||

@@ -21,8 +21,8 @@ export const deleteBlockApi = async (blockId: string) => {
 
 export const reorderBlockApi = async (payload: {
 	items: {
-		id: number;
-		orderIndex: number;
+		id: string;
+		orderIndex: string;
 	}[];
 }) => {
 	const response = await api.patch("/master-data/block/reorder", payload);

@@ -14,8 +14,8 @@ export type Note = {
 };
 
 export type DraggedBlock = {
-	noteId: number;
-	blockId: number;
+	noteId: string;
+	blockId: string;
 };
 
 export type PendingDelete =
