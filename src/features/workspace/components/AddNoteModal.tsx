@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { createNoteApi } from "../../auth/notesApi";
 
 type Props = {
 	isOpen: boolean;
@@ -7,17 +8,22 @@ type Props = {
 	onSubmit: (title: string) => void;
 };
 
-export default function CreateNoteModal({ isOpen, onClose, onSubmit }: Props) {
-	const [title, setTitle] = useState("");
+export default function CreateNoteModal({ isOpen, onClose }: Props) {
+	const [title, setTitle] = useState<string>("");
 
 	if (!isOpen) return null;
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleFormSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
 		if (!title.trim()) return;
 
-		onSubmit(title);
+		await createNoteApi({
+			title,
+		});
+
 		setTitle("");
+		window.location.reload();
 	};
 
 	return (
@@ -43,7 +49,7 @@ export default function CreateNoteModal({ isOpen, onClose, onSubmit }: Props) {
 					</button>
 				</div>
 
-				<form onSubmit={handleSubmit} className="mt-5">
+				<form onSubmit={handleFormSubmit} className="mt-5">
 					<label className="block">
 						<span className="text-sm font-medium text-slate-700">
 							Judul Note

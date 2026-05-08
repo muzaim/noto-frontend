@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { register } from "../../features/auth/authApi";
 import AuthFormCard from "../../features/auth/components/AuthFormCard";
 import AuthLayout from "../../features/auth/components/AuthLayout";
 import AuthTextField from "../../features/auth/components/AuthTextField";
+import { registerApi } from "../../features/auth/authApi";
 
 type RegisterFormValues = {
 	name: string;
@@ -23,7 +23,9 @@ export default function Register() {
 
 	const handleRegister = async (values: RegisterFormValues) => {
 		setIsLoading(true);
-		await register(values);
+
+		await registerApi(values);
+
 		navigate("/workspace");
 	};
 
@@ -66,7 +68,10 @@ export default function Register() {
 
 			<p className="mt-5 text-center text-sm text-slate-500">
 				Sudah punya akun?{" "}
-				<Link to="/login" className="font-medium text-sky-600 hover:text-sky-700">
+				<Link
+					to="/login"
+					className="font-medium text-sky-600 hover:text-sky-700"
+				>
 					Login
 				</Link>
 			</p>

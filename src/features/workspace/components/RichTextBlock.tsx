@@ -10,7 +10,7 @@ type RichTextBlockProps = {
 		event: KeyboardEvent<HTMLElement>,
 		noteId: string,
 		block: Block,
-		index: number
+		index: number,
 	) => void;
 	onRef: (id: string, element: HTMLElement | null) => void;
 	onUpdate: (noteId: string, blockId: string, data: Partial<Block>) => void;
@@ -42,14 +42,21 @@ export default function RichTextBlock({
 		<div
 			ref={(element) => {
 				editorRef.current = element;
+
+				if (element) {
+					element.innerText = block.content;
+				}
+
 				onRef(block.id, element);
 			}}
-			contentEditable={false}
+			contentEditable
 			suppressContentEditableWarning
 			onFocus={() => onFocus(block.id)}
 			onInput={(event) =>
 				onUpdate(noteId, block.id, {
-					content: event.currentTarget.innerHTML,
+					content: JSON.stringify({
+						text: event.currentTarget.innerText,
+					}),
 				})
 			}
 			onKeyDown={(event) => onKeyDown(event, noteId, block, index)}

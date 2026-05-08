@@ -16,12 +16,12 @@ type NoteCardProps = {
 	onDragStart: (
 		event: DragEvent<HTMLElement>,
 		noteId: string,
-		blockId: string
+		blockId: string,
 	) => void;
 	onDrop: (
 		event: DragEvent<HTMLElement>,
 		noteId: string,
-		blockId: string
+		blockId: string,
 	) => void;
 	onFocusTextBlock: (id: string) => void;
 	onFormatText: (command: "bold" | "italic" | "underline") => void;
@@ -29,16 +29,15 @@ type NoteCardProps = {
 		event: KeyboardEvent<HTMLElement>,
 		noteId: string,
 		block: Block,
-		index: number
+		index: number,
 	) => void;
 	onRef: (id: string, element: HTMLElement | null) => void;
 	onToggleBlockMenu: (noteId: string) => void;
 	onUpdateBlock: (
 		noteId: string,
 		blockId: string,
-		data: Partial<Block>
+		data: Partial<Block>,
 	) => void;
-	onUpdateTitle: (noteId: string, title: string) => void;
 };
 
 export default function NoteCard({
@@ -58,20 +57,14 @@ export default function NoteCard({
 	onRef,
 	onToggleBlockMenu,
 	onUpdateBlock,
-	onUpdateTitle,
 }: NoteCardProps) {
 	return (
 		<article className="rounded-3xl border border-sky-100 bg-white p-5 shadow-sm md:p-6">
 			<div className="mb-5 flex flex-col gap-4">
 				<div className="flex items-start justify-between gap-3">
-					<input
-						value={note.title}
-						onChange={(event) =>
-							onUpdateTitle(note.id, event.target.value)
-						}
-						className="w-full bg-transparent text-2xl font-semibold tracking-normal text-slate-950 outline-none placeholder:text-slate-300"
-						placeholder="Judul note..."
-					/>
+					<h1 className="w-full text-2xl font-semibold tracking-normal text-slate-950">
+						{note.title || "Untitled note"}
+					</h1>
 					<button
 						type="button"
 						onClick={() => onDeleteNote(note.id)}

@@ -1,5 +1,10 @@
-import { fakeFetch } from "../../lib/fetcher";
-import { clearStoredUser, getStoredUser, setStoredUser, type AuthUser } from "./authStorage";
+import { api } from "../../lib/axios";
+import {
+	clearStoredUser,
+	getStoredUser,
+	setStoredUser,
+	type AuthUser,
+} from "./authStorage";
 
 type LoginPayload = {
 	email: string;
@@ -12,30 +17,32 @@ type RegisterPayload = {
 	password: string;
 };
 
-export async function login(payload: LoginPayload) {
+export const loginApi = async (payload: LoginPayload) => {
+	const response = await api.post("/auth/login", payload);
+
+	const data = response;
+
 	const user: AuthUser = {
-		email: payload.email,
-		name: payload.email.split("@")[0] || "User",
+		email: data.data.user.email,
+		name: data.data.user.name,
 	};
 
-	await fakeFetch({ data: user });
-	setStoredUser(user);
-	return user;
-}
+	localStorage.setItem("token", data.data.access_token);
 
-export async function register(payload: RegisterPayload) {
-	const user: AuthUser = {
-		email: payload.email,
-		name: payload.name,
-	};
-
-	await fakeFetch({ data: user });
 	setStoredUser(user);
+
 	return user;
-}
+};
+
+export const registerApi = async (payload: RegisterPayload) => {
+	const response = await api.post("/auth/register", payload);
+
+	return response.data;
+};
 
 export async function logout() {
-	await fakeFetch({ data: true, delay: 200 });
+	await api.post("/auth/logout");
+
 	clearStoredUser();
 }
 

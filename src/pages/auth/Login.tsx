@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { login } from "../../features/auth/authApi";
 import AuthFormCard from "../../features/auth/components/AuthFormCard";
 import AuthLayout from "../../features/auth/components/AuthLayout";
 import AuthTextField from "../../features/auth/components/AuthTextField";
+import { loginApi } from "../../features/auth/authApi";
 
 type LoginFormValues = {
 	email: string;
@@ -21,13 +21,23 @@ export default function Login() {
 	} = useForm<LoginFormValues>();
 
 	const handleLogin = async (values: LoginFormValues) => {
-		setIsLoading(true);
-		await login(values);
-		navigate("/workspace");
+		try {
+			setIsLoading(true);
+
+			await loginApi(values);
+			navigate("/workspace");
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
-		<AuthLayout title="Login" description="Masuk untuk lanjut menulis catatanmu.">
+		<AuthLayout
+			title="Login"
+			description="Masuk untuk lanjut menulis catatanmu."
+		>
 			<AuthFormCard
 				onSubmit={handleSubmit(handleLogin)}
 				submitLabel={isLoading ? "Masuk..." : "Masuk"}

@@ -11,13 +11,13 @@ type BlockFieldProps = {
 		event: KeyboardEvent<HTMLElement>,
 		noteId: string,
 		block: Block,
-		index: number
+		index: number,
 	) => void;
 	onRef: (id: string, element: HTMLElement | null) => void;
 	onUpdateBlock: (
 		noteId: string,
 		blockId: string,
-		data: Partial<Block>
+		data: Partial<Block>,
 	) => void;
 };
 

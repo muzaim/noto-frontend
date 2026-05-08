@@ -18,24 +18,25 @@ import type {
 	PendingBlockForm,
 } from "../types";
 import { createBlock, createNote } from "../lib/noteFactory";
-import { getSavedNotes, saveNotes } from "../lib/noteStorage";
+// import { saveNotes } from "../lib/noteStorage";
 import AddBlockModal from "./AddBlockModal";
 import AddNoteModal from "./AddNoteModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import NoteCard from "./NoteCard";
+import { deleteNoteApi, getNotesApi } from "../../auth/notesApi";
 
 export default function WorkspaceView() {
 	const navigate = useNavigate();
-	const [notes, setNotes] = useState<Note[]>(getSavedNotes);
+	const [notes, setNotes] = useState<Note[]>([]);
 	const [draggedBlock, setDraggedBlock] = useState<DraggedBlock | null>(null);
 	const [activeTextBlockId, setActiveTextBlockId] = useState<string | null>(
-		null
+		null,
 	);
 	const [openBlockMenuNoteId, setOpenBlockMenuNoteId] = useState<
 		string | null
 	>(null);
 	const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(
-		null
+		null,
 	);
 	const [pendingBlockForm, setPendingBlockForm] =
 		useState<PendingBlockForm | null>(null);
@@ -44,7 +45,7 @@ export default function WorkspaceView() {
 	const [isOpenNoteModal, setIsOpenNoteModal] = useState(false);
 
 	useEffect(() => {
-		saveNotes(notes);
+		// saveNotes(notes);
 	}, [notes]);
 
 	useEffect(() => {
@@ -56,22 +57,28 @@ export default function WorkspaceView() {
 		nextFocusId.current = null;
 	}, [notes]);
 
+	useEffect(() => {
+		const fetchNotes = async () => {
+			try {
+				const response = await getNotesApi();
+
+				setNotes(response.result);
+			} catch (error) {
+				console.error(error);
+			}
+		};
+
+		void fetchNotes();
+	}, []);
+
 	const setFieldRef = (id: string, element: HTMLElement | null) => {
 		fieldRefs.current[id] = element;
-	};
-
-	const updateNoteTitle = (noteId: string, title: string) => {
-		setNotes((currentNotes) =>
-			currentNotes.map((note) =>
-				note.id === noteId ? { ...note, title } : note
-			)
-		);
 	};
 
 	const updateBlock = (
 		noteId: string,
 		blockId: string,
-		data: Partial<Block>
+		data: Partial<Block>,
 	) => {
 		setNotes((currentNotes) =>
 			currentNotes.map((note) =>
@@ -81,11 +88,11 @@ export default function WorkspaceView() {
 							blocks: note.blocks.map((block) =>
 								block.id === blockId
 									? { ...block, ...data }
-									: block
+									: block,
 							),
-					  }
-					: note
-			)
+						}
+					: note,
+			),
 		);
 	};
 
@@ -97,6 +104,7 @@ export default function WorkspaceView() {
 
 	const requestDeleteNote = (noteId: string) => {
 		const note = notes.find((currentNote) => currentNote.id === noteId);
+
 		setPendingDelete({
 			type: "note",
 			noteId,
@@ -104,18 +112,11 @@ export default function WorkspaceView() {
 		});
 	};
 
-	const deleteNote = (noteId: string) => {
-		setOpenBlockMenuNoteId(null);
-		setNotes((currentNotes) =>
-			currentNotes.filter((note) => note.id !== noteId)
-		);
-	};
-
 	const addBlock = (
 		noteId: string,
 		type: BlockType = "text",
 		afterIndex?: number,
-		data: Partial<Block> = {}
+		data: Partial<Block> = {},
 	) => {
 		const newBlock = createBlock(type, data);
 		nextFocusId.current = newBlock.id;
@@ -132,7 +133,7 @@ export default function WorkspaceView() {
 				nextBlocks.splice(insertIndex + 1, 0, newBlock);
 
 				return { ...note, blocks: nextBlocks };
-			})
+			}),
 		);
 	};
 
@@ -153,36 +154,45 @@ export default function WorkspaceView() {
 				}
 
 				const nextBlocks = note.blocks.filter(
-					(block) => block.id !== blockId
+					(block) => block.id !== blockId,
 				);
 
 				return {
 					...note,
 					blocks: nextBlocks,
 				};
-			})
+			}),
 		);
 	};
 
-	const confirmDelete = () => {
+	const confirmDelete = async () => {
 		if (!pendingDelete) {
 			return;
 		}
 
-		if (pendingDelete.type === "note") {
-			deleteNote(pendingDelete.noteId);
-		} else {
-			deleteBlock(pendingDelete.noteId, pendingDelete.blockId);
+		try {
+			if (pendingDelete.type === "note") {
+				await deleteNoteApi(pendingDelete.noteId);
+
+				setNotes((currentNotes) =>
+					currentNotes.filter(
+						(note) => note.id !== pendingDelete.noteId,
+					),
+				);
+			} else {
+				deleteBlock(pendingDelete.noteId, pendingDelete.blockId);
+			}
+
+			setPendingDelete(null);
+		} catch (error) {
+			console.error(error);
 		}
-
-		setPendingDelete(null);
 	};
-
 	const handleEnter = (
 		event: KeyboardEvent<HTMLElement>,
 		noteId: string,
 		block: Block,
-		index: number
+		index: number,
 	) => {
 		if (event.key !== "Enter" || event.shiftKey || block.type === "code") {
 			return;
@@ -192,7 +202,7 @@ export default function WorkspaceView() {
 		addBlock(
 			noteId,
 			block.type === "checklist" ? "checklist" : "text",
-			index
+			index,
 		);
 	};
 
@@ -212,10 +222,10 @@ export default function WorkspaceView() {
 				}
 
 				const draggedIndex = note.blocks.findIndex(
-					(block) => block.id === draggedBlock.blockId
+					(block) => block.id === draggedBlock.blockId,
 				);
 				const targetIndex = note.blocks.findIndex(
-					(block) => block.id === targetBlockId
+					(block) => block.id === targetBlockId,
 				);
 
 				if (draggedIndex < 0 || targetIndex < 0) {
@@ -227,14 +237,14 @@ export default function WorkspaceView() {
 				nextBlocks.splice(targetIndex, 0, movedBlock);
 
 				return { ...note, blocks: nextBlocks };
-			})
+			}),
 		);
 	};
 
 	const handleBlockDragStart = (
 		event: DragEvent<HTMLElement>,
 		noteId: string,
-		blockId: string
+		blockId: string,
 	) => {
 		event.dataTransfer.effectAllowed = "move";
 		event.dataTransfer.setData("text/plain", blockId);
@@ -244,7 +254,7 @@ export default function WorkspaceView() {
 	const handleDrop = (
 		event: DragEvent<HTMLElement>,
 		noteId: string,
-		blockId: string
+		blockId: string,
 	) => {
 		event.preventDefault();
 		moveBlock(noteId, blockId);
@@ -266,7 +276,7 @@ export default function WorkspaceView() {
 		document.execCommand(command);
 
 		const activeNote = notes.find((note) =>
-			note.blocks.some((block) => block.id === activeTextBlockId)
+			note.blocks.some((block) => block.id === activeTextBlockId),
 		);
 
 		if (activeField && activeNote) {
@@ -278,7 +288,7 @@ export default function WorkspaceView() {
 
 	const toggleBlockMenu = (noteId: string) => {
 		setOpenBlockMenuNoteId((openNoteId) =>
-			openNoteId === noteId ? null : noteId
+			openNoteId === noteId ? null : noteId,
 		);
 	};
 
@@ -369,7 +379,6 @@ export default function WorkspaceView() {
 								onRef={setFieldRef}
 								onToggleBlockMenu={toggleBlockMenu}
 								onUpdateBlock={updateBlock}
-								onUpdateTitle={updateNoteTitle}
 							/>
 						))
 					)}
@@ -402,7 +411,7 @@ export default function WorkspaceView() {
 							pendingBlockForm.noteId,
 							pendingBlockForm.type,
 							undefined,
-							data
+							data,
 						);
 						setPendingBlockForm(null);
 					}}
