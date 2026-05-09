@@ -4,7 +4,6 @@ export interface CreateNotePayload {
 }
 export const getNotesApi = async () => {
 	const response = await api.get("/master-data/note");
-	// const response = await api.get("/master-data/note/audit-trail");
 
 	return response.data;
 };

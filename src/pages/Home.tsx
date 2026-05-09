@@ -4,6 +4,7 @@ import FeaturesSection from "../features/home/components/FeaturesSection";
 import HomeFooter from "../features/home/components/HomeFooter";
 import HomeHero from "../features/home/components/HomeHero";
 import StepsSection from "../features/home/components/StepsSection";
+import Pricing from "../features/home/components/Pricing";
 
 export default function Home() {
 	return (
@@ -21,6 +22,7 @@ export default function Home() {
 			<HomeHero />
 			<FeaturesSection />
 			<StepsSection />
+			<Pricing />
 			<HomeFooter />
 		</main>
 	);

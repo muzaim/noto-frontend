@@ -9,11 +9,11 @@ export default function HomeHero() {
 					Simple workspace
 				</p>
 				<h1 className="max-w-2xl text-5xl font-semibold leading-tight tracking-normal text-slate-950 md:text-6xl">
-					Catat ide, susun tulisan, dan lanjutkan kapan saja.
+					Tulis apa aja yang ada di kepala kamu.
 				</h1>
+
 				<p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-					Noto adalah workspace sederhana bergaya Notion untuk mulai
-					menulis tanpa banyak distraksi.
+					Ga perlu ribet, langsung sat-set.
 				</p>
 				<div className="mt-8 flex flex-wrap gap-3">
 					<Link

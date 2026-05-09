@@ -19,15 +19,21 @@ export default function Login() {
 		handleSubmit,
 		register,
 	} = useForm<LoginFormValues>();
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const handleLogin = async (values: LoginFormValues) => {
 		try {
 			setIsLoading(true);
 
+			setErrorMessage("");
+
 			await loginApi(values);
+
 			navigate("/workspace");
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+
+			setErrorMessage(error?.response?.data?.message ?? "Login gagal");
 		} finally {
 			setIsLoading(false);
 		}
@@ -60,6 +66,12 @@ export default function Login() {
 						required: "Password wajib diisi",
 					})}
 				/>
+
+				{errorMessage && (
+					<div className="mb-4 mt-4 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+						{errorMessage}
+					</div>
+				)}
 			</AuthFormCard>
 
 			<p className="mt-5 text-center text-sm text-slate-500">

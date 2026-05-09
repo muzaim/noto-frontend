@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 
 import AppHeader from "../../../components/layout/AppHeader";
 import { getAuditTrailApi } from "../../auth/auditTrailApi";
+import { logout } from "../../auth/authApi";
 
 type AuditTrail = {
 	id: number;
@@ -14,8 +15,8 @@ type AuditTrail = {
 };
 
 export default function AuditTrailView() {
+	const navigate = useNavigate();
 	const [auditTrails, setAuditTrails] = useState<AuditTrail[]>([]);
-
 	const [loading, setLoading] = useState(true);
 
 	const fetchAuditTrail = async () => {
@@ -28,6 +29,11 @@ export default function AuditTrailView() {
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const handleLogout = async () => {
+		await logout();
+		navigate("/");
 	};
 
 	useEffect(() => {
@@ -51,11 +57,12 @@ export default function AuditTrailView() {
 							to="/audit-trail"
 							className="rounded-full bg-sky-100 px-4 py-2 text-sm font-medium text-sky-700"
 						>
-							Audit Trail
+							History
 						</Link>
 
 						<button
 							type="button"
+							onClick={handleLogout}
 							className="inline-flex items-center gap-2 rounded-full border border-sky-100 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-sky-50 hover:text-sky-700"
 						>
 							<LogOut size={16} />
@@ -68,7 +75,7 @@ export default function AuditTrailView() {
 			<section className="mx-auto w-full max-w-6xl px-6 py-10">
 				<div className="rounded-3xl border border-sky-100 bg-white p-6 shadow-sm md:p-8">
 					<h1 className="text-2xl font-bold text-slate-900">
-						Audit Trail
+						History
 					</h1>
 
 					<p className="mt-2 text-sm text-slate-500">
@@ -82,7 +89,7 @@ export default function AuditTrailView() {
 							</div>
 						) : auditTrails.length === 0 ? (
 							<div className="text-sm text-slate-400">
-								Belum ada audit trail
+								Tidak ada data..
 							</div>
 						) : (
 							auditTrails.map((item) => {

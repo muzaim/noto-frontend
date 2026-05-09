@@ -1,9 +1,12 @@
-import { GripVertical, Plus, Trash2 } from "lucide-react";
-import type { DragEvent, KeyboardEvent } from "react";
+import { GripVertical, Trash2 } from "lucide-react";
+import { useState, type DragEvent, type KeyboardEvent } from "react";
 import type { Block, DraggedBlock } from "../types";
 import { CheckSquare, Code2, Image, Type } from "lucide-react";
 
 import BlockField from "./BlockField";
+import SubBlockToolbar from "./SubBlockToolbar";
+import AddBlockModal from "./AddBlockModal";
+import { createBlockApi, type CreateBlockPayload } from "../../auth/blockApi";
 
 type BlockItemProps = {
 	block: Block;
@@ -53,10 +56,6 @@ const renderIcon = (type: string) => {
 	}
 };
 
-const handleClickSub = (block: Block) => {
-	console.log(`ehee`, block);
-};
-
 export default function BlockItem({
 	block,
 	draggedBlock,
@@ -72,6 +71,54 @@ export default function BlockItem({
 	onRef,
 	onUpdateBlock,
 }: BlockItemProps) {
+	const [openSubBlockId, setOpenSubBlockId] = useState<string | null>(null);
+
+	const [pendingSubBlockForm, setPendingSubBlockForm] = useState<{
+		block: Block;
+		type: Block;
+	} | null>(null);
+
+	const handleClickSub = (block: Block, type: Block) => {
+		setPendingSubBlockForm({
+			block,
+			type,
+		});
+	};
+
+	const toggleSubBlockMenu = (blockId: string) => {
+		setOpenSubBlockId((current) => (current === blockId ? null : blockId));
+	};
+
+	const addSubBlock = async (
+		parentBlock: Block,
+		content: string,
+		type: Block = "text",
+		checked?: boolean
+	) => {
+		try {
+			const payload: CreateBlockPayload = {
+				noteId: parentBlock.noteId,
+
+				parentId: parentBlock.id,
+
+				type,
+
+				content,
+			};
+
+			if (type === "checklist") {
+				payload.checked = checked;
+			}
+
+			await createBlockApi(payload);
+
+			setPendingSubBlockForm(null);
+
+			setOpenSubBlockId(null);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 	return (
 		<section
 			onDragOver={onDragOver}
@@ -99,7 +146,7 @@ export default function BlockItem({
 					{renderIcon(block.type)}
 				</span>
 			</div>
-			<div className="flex min-w-0 flex-1 gap-3">
+			<div className="flex min-w-0 flex-1 gap-3 items-center justify-center">
 				<BlockField
 					block={block}
 					index={index}
@@ -111,13 +158,12 @@ export default function BlockItem({
 				/>
 				{!block.parentId && (
 					<>
-						<button
-							type="button"
-							onClick={() => handleClickSub(block)}
-							className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-100 text-sky-600 transition hover:bg-sky-50"
-						>
-							<Plus size={14} />
-						</button>
+						<SubBlockToolbar
+							isOpen={openSubBlockId === block.id}
+							onToggle={() => toggleSubBlockMenu(block.id)}
+							onClose={() => setOpenSubBlockId(null)}
+							onAddBlock={(type) => handleClickSub(block, type)}
+						/>
 					</>
 				)}
 				<button
@@ -129,6 +175,21 @@ export default function BlockItem({
 					<Trash2 size={16} />
 				</button>
 			</div>
+
+			{pendingSubBlockForm && (
+				<AddBlockModal
+					blockType={pendingSubBlockForm.type}
+					onClose={() => setPendingSubBlockForm(null)}
+					onSubmit={(data) => {
+						addSubBlock(
+							pendingSubBlockForm.block,
+							data.content,
+							pendingSubBlockForm.type,
+							data.checked
+						);
+					}}
+				/>
+			)}
 		</section>
 	);
 }

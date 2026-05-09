@@ -2,7 +2,7 @@ export const features = [
 	{
 		title: "Workspace ringan",
 		description:
-			"Tulis catatan tanpa banyak tombol yang mengganggu fokus awal.",
+			"Tulis catatan tanpa banyak tombol yang mengganggu fokus.",
 	},
 	{
 		title: "Blok fleksibel",
