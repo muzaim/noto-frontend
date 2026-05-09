@@ -1,6 +1,5 @@
 import { X } from "lucide-react";
 import { useState } from "react";
-import { createNoteApi } from "../../auth/notesApi";
 
 type Props = {
 	isOpen: boolean;
@@ -8,7 +7,7 @@ type Props = {
 	onSubmit: (title: string) => void;
 };
 
-export default function CreateNoteModal({ isOpen, onClose }: Props) {
+export default function CreateNoteModal({ isOpen, onClose, onSubmit }: Props) {
 	const [title, setTitle] = useState<string>("");
 
 	if (!isOpen) return null;
@@ -18,12 +17,9 @@ export default function CreateNoteModal({ isOpen, onClose }: Props) {
 
 		if (!title.trim()) return;
 
-		await createNoteApi({
-			title,
-		});
+		await onSubmit(title);
 
 		setTitle("");
-		window.location.reload();
 	};
 
 	return (
