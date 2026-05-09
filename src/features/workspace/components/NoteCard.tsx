@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import type { DragEvent, KeyboardEvent } from "react";
 import type { Block, BlockType, DraggedBlock, Note } from "../types";
 import BlockItem from "./BlockItem";
@@ -38,6 +38,7 @@ type NoteCardProps = {
 		blockId: string,
 		data: Partial<Block>
 	) => void;
+	onEditNoteModal: (note: Note) => void;
 };
 
 export default function NoteCard({
@@ -57,6 +58,7 @@ export default function NoteCard({
 	onRef,
 	onToggleBlockMenu,
 	onUpdateBlock,
+	onEditNoteModal,
 }: NoteCardProps) {
 	return (
 		<article className="rounded-3xl border border-sky-100 bg-white p-5 shadow-sm md:p-6">
@@ -74,6 +76,14 @@ export default function NoteCard({
 							onRequestClose={() => onToggleBlockMenu(note.id)}
 							onToggleBlockMenu={() => onToggleBlockMenu(note.id)}
 						/>
+						<button
+							type="button"
+							onClick={() => onEditNoteModal(note)}
+							className="shrink-0 rounded-full border border-yellow-100 p-2 text-yellow-500 transition hover:bg-red-50"
+							aria-label="Delete note"
+						>
+							<Pencil size={17} />
+						</button>
 						<button
 							type="button"
 							onClick={() => onDeleteNote(note.id)}

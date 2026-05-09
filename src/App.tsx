@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Workspace from "./pages/Workspace";
+import AuditTrail from "./pages/AuditTrail";
 
 function App() {
 	return (
@@ -18,8 +19,12 @@ function App() {
 				</Route>
 				<Route element={<ProtectedRoute />}>
 					<Route path="/workspace" element={<Workspace />} />
+					<Route path="/audit-trail" element={<AuditTrail />} />
 				</Route>
-				<Route path="/editor" element={<Navigate to="/workspace" replace />} />
+				<Route
+					path="/editor"
+					element={<Navigate to="/workspace" replace />}
+				/>
 			</Routes>
 		</BrowserRouter>
 	);

@@ -6,7 +6,7 @@ import {
 	useState,
 } from "react";
 import { LogOut, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AppHeader from "../../../components/layout/AppHeader";
 import { logout } from "../../auth/authApi";
 import type {
@@ -49,7 +49,9 @@ export default function WorkspaceView() {
 	const fieldRefs = useRef<Record<string, HTMLElement | null>>({});
 	const nextFocusId = useRef<string | null>(null);
 	const [isOpenNoteModal, setIsOpenNoteModal] = useState(false);
+	const [selectedNoteId, setSelectedNoteId] = useState<number | null>(null);
 
+	const [noteTitle, setNoteTitle] = useState("");
 	useEffect(() => {
 		const syncNotes = async () => {
 			const response = await getNotesApi();
@@ -268,6 +270,14 @@ export default function WorkspaceView() {
 		event.dataTransfer.dropEffect = "move";
 	};
 
+	const handleEditNoteModal = (note: Note) => {
+		setSelectedNoteId(note.id);
+
+		setNoteTitle(note.title);
+
+		setIsOpenNoteModal(true);
+	};
+
 	const formatActiveText = (command: "bold" | "italic" | "underline") => {
 		if (!activeTextBlockId) {
 			return;
@@ -305,9 +315,19 @@ export default function WorkspaceView() {
 				variant="workspace"
 				action={
 					<div className="flex items-center gap-2">
-						<div className="rounded-full bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700">
+						<Link
+							to="/workspace"
+							className="rounded-full bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700 transition hover:bg-sky-100"
+						>
 							Workspace
-						</div>
+						</Link>
+
+						<Link
+							to="/audit-trail"
+							className="rounded-full bg-sky-50 px-4 py-2 text-sm font-medium text-sky-700 transition hover:bg-sky-100"
+						>
+							Audit Trail
+						</Link>
 						<button
 							type="button"
 							onClick={handleLogout}
@@ -381,6 +401,7 @@ export default function WorkspaceView() {
 								onRef={setFieldRef}
 								onToggleBlockMenu={toggleBlockMenu}
 								onUpdateBlock={updateBlock}
+								onEditNoteModal={handleEditNoteModal}
 							/>
 						))
 					)}
@@ -424,7 +445,15 @@ export default function WorkspaceView() {
 			{isOpenNoteModal && (
 				<AddNoteModal
 					isOpen={isOpenNoteModal}
-					onClose={() => setIsOpenNoteModal(false)}
+					noteId={selectedNoteId}
+					initialTitle={noteTitle}
+					onClose={() => {
+						setIsOpenNoteModal(false);
+
+						setSelectedNoteId(null);
+
+						setNoteTitle("");
+					}}
 					onSubmit={handleCreateNote}
 				/>
 			)}
