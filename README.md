@@ -1,7 +1,7 @@
 # Noto Frontend
 
-Noto Frontend adalah aplikasi note bergaya block editor seperti Notion mini version.  
-User dapat membuat note, block, nested block, checklist, code block, image block, drag & drop, serta realtime update menggunakan websocket.
+Noto Frontend is a note-taking application inspired by block editor style apps like Notion.  
+Users can create notes, blocks, nested blocks, checklist blocks, code blocks, image blocks, drag & drop blocks, and receive realtime updates using websocket.
 
 ---
 
@@ -15,7 +15,7 @@ User dapat membuat note, block, nested block, checklist, code block, image block
 - Code block
 - Image block
 - Drag & drop block
-- Realtime update with websocket
+- Realtime websocket updates
 - Audit trail activity
 - Responsive UI
 - Modern clean interface
@@ -59,10 +59,10 @@ npm install
 
 # Environment Setup
 
-Buat file `.env`
+Create a `.env` file
 
 ```env
-VITE_API_URL=http://localhost:3000/api/v1
+VITE_API_URL=http://localhost:8181/api/v1
 ```
 
 ---
@@ -73,7 +73,7 @@ VITE_API_URL=http://localhost:3000/api/v1
 npm run dev
 ```
 
-Frontend berjalan di:
+Frontend will run on:
 
 ```txt
 http://localhost:5173
@@ -83,7 +83,7 @@ http://localhost:5173
 
 # Backend Requirement
 
-Project ini membutuhkan backend Noto API agar seluruh fitur berjalan dengan baik.
+This project requires the Noto Backend API for all features to work properly.
 
 Default backend URL:
 
@@ -105,10 +105,10 @@ http://localhost:8181/api/v1
 
 # Realtime Features
 
-Menggunakan websocket untuk:
+Using websocket for:
 
-- Realtime note update
-- Synchronize antar tab/session
+- Realtime note updates
+- Synchronization between tabs/sessions
 - Live workspace refresh
 
 ---
@@ -119,6 +119,8 @@ Menggunakan websocket untuk:
 Email    : admin@yopmail.com
 Password : 123456
 ```
+
+---
 
 # Author
 
