@@ -1,73 +1,125 @@
-# React + TypeScript + Vite
+# Noto Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Noto Frontend adalah aplikasi note bergaya block editor seperti Notion mini version.  
+User dapat membuat note, block, nested block, checklist, code block, image block, drag & drop, serta realtime update menggunakan websocket.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+# Features
 
-## React Compiler
+- Authentication UI
+- Workspace notes
+- Block editor
+- Nested / sub block
+- Checklist block
+- Code block
+- Image block
+- Drag & drop block
+- Realtime update with websocket
+- Audit trail activity
+- Responsive UI
+- Modern clean interface
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+# Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React
+- TypeScript
+- TailwindCSS
+- React Hook Form
+- Socket.IO Client
+- React Router DOM
+- Axios
+- AOS Animation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Clone Repository
+
+```bash
+git clone https://gitlab.com/muzaimsurya16/noto-frontend.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd noto-frontend
 ```
+
+---
+
+# Install Dependencies
+
+```bash
+npm install
+```
+
+---
+
+# Environment Setup
+
+Buat file `.env`
+
+```env
+VITE_API_URL=http://localhost:3000/api/v1
+```
+
+---
+
+# Run Project
+
+```bash
+npm run dev
+```
+
+Frontend berjalan di:
+
+```txt
+http://localhost:5173
+```
+
+---
+
+# Backend Requirement
+
+Project ini membutuhkan backend Noto API agar seluruh fitur berjalan dengan baik.
+
+Default backend URL:
+
+```txt
+http://localhost:8181/api/v1
+```
+
+---
+
+# Main Pages
+
+- Landing Page
+- Login
+- Register
+- Workspace
+- Audit Trail
+
+---
+
+# Realtime Features
+
+Menggunakan websocket untuk:
+
+- Realtime note update
+- Synchronize antar tab/session
+- Live workspace refresh
+
+---
+
+# Dummy Account
+
+```txt
+Email    : admin@yopmail.com
+Password : 123456
+```
+
+# Author
+
+Made with ❤️ by Muzaim Surya
