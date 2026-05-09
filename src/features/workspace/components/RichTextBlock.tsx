@@ -47,7 +47,6 @@ export default function RichTextBlock({ block, onRef }: RichTextBlockProps) {
 				className="min-h-10 w-full rounded-xl px-1 py-2 text-base leading-7 text-slate-800"
 				data-placeholder="Tulis paragraf..."
 			/>
-			<div className="text-xs text-slate-400">{block.orderIndex}</div>
 		</>
 	);
 }

@@ -16,12 +16,12 @@ type NoteCardProps = {
 	onDragStart: (
 		event: DragEvent<HTMLElement>,
 		noteId: string,
-		blockId: string,
+		blockId: string
 	) => void;
 	onDrop: (
 		event: DragEvent<HTMLElement>,
 		noteId: string,
-		blockId: string,
+		blockId: string
 	) => void;
 	onFocusTextBlock: (id: string) => void;
 	onFormatText: (command: "bold" | "italic" | "underline") => void;
@@ -29,14 +29,14 @@ type NoteCardProps = {
 		event: KeyboardEvent<HTMLElement>,
 		noteId: string,
 		block: Block,
-		index: number,
+		index: number
 	) => void;
 	onRef: (id: string, element: HTMLElement | null) => void;
 	onToggleBlockMenu: (noteId: string) => void;
 	onUpdateBlock: (
 		noteId: string,
 		blockId: string,
-		data: Partial<Block>,
+		data: Partial<Block>
 	) => void;
 };
 
@@ -65,49 +65,95 @@ export default function NoteCard({
 					<h1 className="w-full text-2xl font-semibold tracking-normal text-slate-950">
 						{note.title || "Untitled note"}
 					</h1>
-					<button
-						type="button"
-						onClick={() => onDeleteNote(note.id)}
-						className="shrink-0 rounded-full border border-red-100 p-2 text-red-500 transition hover:bg-red-50"
-						aria-label="Delete note"
-					>
-						<Trash2 size={17} />
-					</button>
-				</div>
 
-				<BlockToolbar
-					isBlockMenuOpen={isBlockMenuOpen}
-					onAddBlock={(type) => onAddBlock(note.id, type)}
-					onFormatText={onFormatText}
-					onRequestClose={() => onToggleBlockMenu(note.id)}
-					onToggleBlockMenu={() => onToggleBlockMenu(note.id)}
-				/>
+					<div className="flex items-center gap-2">
+						<BlockToolbar
+							isBlockMenuOpen={isBlockMenuOpen}
+							onAddBlock={(type) => onAddBlock(note.id, type)}
+							onFormatText={onFormatText}
+							onRequestClose={() => onToggleBlockMenu(note.id)}
+							onToggleBlockMenu={() => onToggleBlockMenu(note.id)}
+						/>
+						<button
+							type="button"
+							onClick={() => onDeleteNote(note.id)}
+							className="shrink-0 rounded-full border border-red-100 p-2 text-red-500 transition hover:bg-red-50"
+							aria-label="Delete note"
+						>
+							<Trash2 size={17} />
+						</button>
+					</div>
+				</div>
 			</div>
 
 			<div className="space-y-3">
 				{note.blocks.length === 0 ? (
-					<div className="text-sm text-gray-400 italic py-3 text-center">
+					<div className="py-3 text-center text-sm italic text-gray-400">
 						Tidak ada block
 					</div>
 				) : (
-					note.blocks.map((block, index) => (
-						<BlockItem
-							key={block.id}
-							block={block}
-							draggedBlock={draggedBlock}
-							index={index}
-							noteId={note.id}
-							onDeleteBlock={onDeleteBlock}
-							onDragEnd={onDragEnd}
-							onDragOver={onDragOver}
-							onDragStart={onDragStart}
-							onDrop={onDrop}
-							onFocusTextBlock={onFocusTextBlock}
-							onKeyDown={onKeyDown}
-							onRef={onRef}
-							onUpdateBlock={onUpdateBlock}
-						/>
-					))
+					note.blocks
+						.filter((block) => !block.parentId)
+						.map((block, index) => {
+							const childBlocks = note.blocks.filter(
+								(child) => child.parentId === block.id
+							);
+
+							return (
+								<div key={block.id}>
+									<BlockItem
+										block={block}
+										draggedBlock={draggedBlock}
+										index={index}
+										noteId={note.id}
+										onDeleteBlock={onDeleteBlock}
+										onDragEnd={onDragEnd}
+										onDragOver={onDragOver}
+										onDragStart={onDragStart}
+										onDrop={onDrop}
+										onFocusTextBlock={onFocusTextBlock}
+										onKeyDown={onKeyDown}
+										onRef={onRef}
+										onUpdateBlock={onUpdateBlock}
+									/>
+
+									{childBlocks.length > 0 && (
+										<div className="mt-2 space-y-2 border-l border-sky-100 pl-6">
+											{childBlocks.map(
+												(child, childIndex) => (
+													<BlockItem
+														key={child.id}
+														block={child}
+														draggedBlock={
+															draggedBlock
+														}
+														index={childIndex}
+														noteId={note.id}
+														onDeleteBlock={
+															onDeleteBlock
+														}
+														onDragEnd={onDragEnd}
+														onDragOver={onDragOver}
+														onDragStart={
+															onDragStart
+														}
+														onDrop={onDrop}
+														onFocusTextBlock={
+															onFocusTextBlock
+														}
+														onKeyDown={onKeyDown}
+														onRef={onRef}
+														onUpdateBlock={
+															onUpdateBlock
+														}
+													/>
+												)
+											)}
+										</div>
+									)}
+								</div>
+							);
+						})
 				)}
 			</div>
 		</article>

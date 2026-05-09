@@ -40,6 +40,7 @@ export default function WorkspaceView() {
 	const [openBlockMenuNoteId, setOpenBlockMenuNoteId] = useState<
 		string | null
 	>(null);
+
 	const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(
 		null
 	);
@@ -225,9 +226,10 @@ export default function WorkspaceView() {
 
 		const nextBlocks = [...note.blocks];
 
-		const [movedBlock] = nextBlocks.splice(draggedIndex, 1);
-
-		nextBlocks.splice(targetIndex, 0, movedBlock);
+		[nextBlocks[draggedIndex], nextBlocks[targetIndex]] = [
+			nextBlocks[targetIndex],
+			nextBlocks[draggedIndex],
+		];
 
 		try {
 			await reorderBlockApi({

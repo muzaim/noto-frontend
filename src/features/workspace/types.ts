@@ -6,6 +6,7 @@ export type Block = {
 	content: string;
 	checked?: boolean;
 	orderIndex?: number;
+	parentId?: string;
 };
 
 export type Note = {

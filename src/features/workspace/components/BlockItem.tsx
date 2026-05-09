@@ -1,4 +1,4 @@
-import { GripVertical, Trash2 } from "lucide-react";
+import { GripVertical, Plus, Trash2 } from "lucide-react";
 import type { DragEvent, KeyboardEvent } from "react";
 import type { Block, DraggedBlock } from "../types";
 import { CheckSquare, Code2, Image, Type } from "lucide-react";
@@ -53,6 +53,10 @@ const renderIcon = (type: string) => {
 	}
 };
 
+const handleClickSub = (block: Block) => {
+	console.log(`ehee`, block);
+};
+
 export default function BlockItem({
 	block,
 	draggedBlock,
@@ -91,7 +95,6 @@ export default function BlockItem({
 				>
 					<GripVertical size={17} />
 				</button>
-
 				<span className="flex items-center justify-center rounded-full bg-sky-50 p-1 text-sky-700">
 					{renderIcon(block.type)}
 				</span>
@@ -106,6 +109,17 @@ export default function BlockItem({
 					onRef={onRef}
 					onUpdateBlock={onUpdateBlock}
 				/>
+				{!block.parentId && (
+					<>
+						<button
+							type="button"
+							onClick={() => handleClickSub(block)}
+							className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-100 text-sky-600 transition hover:bg-sky-50"
+						>
+							<Plus size={14} />
+						</button>
+					</>
+				)}
 				<button
 					type="button"
 					onClick={() => onDeleteBlock(noteId, block.id)}

@@ -56,7 +56,6 @@ export default function BlockToolbar({
 					className="inline-flex items-center gap-2 rounded-full bg-sky-100 px-4 py-2 text-sm font-semibold text-sky-700 transition hover:bg-sky-200"
 				>
 					<ListPlus size={16} />
-					Add block
 				</button>
 				{isBlockMenuOpen && (
 					<div className="absolute left-0 z-10 mt-2 w-44 overflow-hidden rounded-2xl border border-sky-100 bg-white p-2 shadow-lg">
