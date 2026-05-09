@@ -19,16 +19,19 @@ const modalCopy = {
 		label: "Isi text",
 		placeholder: "Tulis isi paragraf...",
 	},
+
 	checklist: {
 		title: "Tambah checklist block",
 		label: "Isi task",
 		placeholder: "Tulis task...",
 	},
+
 	image: {
 		title: "Tambah image block",
 		label: "URL gambar",
 		placeholder: "https://example.com/image.jpg",
 	},
+
 	code: {
 		title: "Tambah code block",
 		label: "Isi kode",
@@ -36,7 +39,11 @@ const modalCopy = {
 	},
 } satisfies Record<
 	BlockType,
-	{ title: string; label: string; placeholder: string }
+	{
+		title: string;
+		label: string;
+		placeholder: string;
+	}
 >;
 
 export default function AddBlockModal({
@@ -44,7 +51,11 @@ export default function AddBlockModal({
 	onClose,
 	onSubmit,
 }: AddBlockModalProps) {
-	const { register, handleSubmit } = useForm<BlockFormValues>({
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<BlockFormValues>({
 		defaultValues: {
 			content: "",
 			checked: false,
@@ -69,6 +80,7 @@ export default function AddBlockModal({
 							{copy.title}
 						</h2>
 					</div>
+
 					<button
 						type="button"
 						onClick={onClose}
@@ -95,18 +107,28 @@ export default function AddBlockModal({
 
 						{blockType === "code" ? (
 							<textarea
-								{...register("content", { required: true })}
+								{...register("content", {
+									required: "Field ini wajib diisi",
+								})}
 								rows={6}
 								placeholder={copy.placeholder}
 								className="mt-2 w-full rounded-xl border border-sky-100 px-4 py-3 text-sm outline-none transition placeholder:text-slate-300 focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
 							/>
 						) : (
 							<input
-								{...register("content", { required: true })}
+								{...register("content", {
+									required: "Field ini wajib diisi",
+								})}
 								type={blockType === "image" ? "url" : "text"}
 								placeholder={copy.placeholder}
 								className="mt-2 w-full rounded-xl border border-sky-100 px-4 py-3 text-sm outline-none transition placeholder:text-slate-300 focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
 							/>
+						)}
+
+						{errors.content && (
+							<p className="mt-2 text-sm font-medium text-red-500">
+								{errors.content.message}
+							</p>
 						)}
 					</label>
 
@@ -129,6 +151,7 @@ export default function AddBlockModal({
 						>
 							Batal
 						</button>
+
 						<button
 							type="submit"
 							className="rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-600"

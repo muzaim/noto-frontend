@@ -18,7 +18,12 @@ export default function Login() {
 		formState: { errors },
 		handleSubmit,
 		register,
-	} = useForm<LoginFormValues>();
+	} = useForm<LoginFormValues>({
+		defaultValues: {
+			email: "",
+			password: "",
+		},
+	});
 	const [errorMessage, setErrorMessage] = useState("");
 
 	const handleLogin = async (values: LoginFormValues) => {

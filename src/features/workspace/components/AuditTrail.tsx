@@ -101,6 +101,14 @@ export default function AuditTrailView() {
 									DELETE: "bg-red-100 text-red-700",
 								};
 
+								const parsedOldValues = item.old_values
+									? JSON.parse(item.old_values)
+									: null;
+
+								const parsedNewValues = item.new_values
+									? JSON.parse(item.new_values)
+									: null;
+
 								return (
 									<div
 										key={item.id}
@@ -130,9 +138,39 @@ export default function AuditTrailView() {
 											</span>
 										</div>
 
-										<p className="mt-3 text-sm text-slate-600">
-											You {item.description}
+										<p className="mt-3 text-sm text-slate-600 capitalize">
+											{item.description}
 										</p>
+
+										{item.action === "UPDATE" ? (
+											<div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+												<span className="rounded-full bg-red-100 px-3 py-1 font-medium text-red-700">
+													From:{" "}
+													{parsedOldValues?.title ??
+														parsedOldValues?.content}
+												</span>
+
+												<span className="rounded-full bg-sky-100 px-3 py-1 font-medium text-sky-700">
+													To:{" "}
+													{parsedNewValues?.title ??
+														parsedNewValues?.content}
+												</span>
+											</div>
+										) : (
+											(parsedNewValues?.content ||
+												parsedNewValues?.title ||
+												parsedOldValues?.content ||
+												parsedOldValues?.title) && (
+												<div className="mt-3">
+													<span className="inline-flex max-w-full items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+														{parsedNewValues?.content ??
+															parsedNewValues?.title ??
+															parsedOldValues?.content ??
+															parsedOldValues?.title}
+													</span>
+												</div>
+											)
+										)}
 									</div>
 								);
 							})

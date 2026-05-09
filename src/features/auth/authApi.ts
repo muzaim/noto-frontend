@@ -27,8 +27,6 @@ export const loginApi = async (payload: LoginPayload) => {
 		name: data.data.user.name,
 	};
 
-	localStorage.setItem("token", data.data.access_token);
-
 	setStoredUser(user);
 
 	return user;

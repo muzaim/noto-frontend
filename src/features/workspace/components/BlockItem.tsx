@@ -157,19 +157,17 @@ export default function BlockItem({
 					onUpdateBlock={onUpdateBlock}
 				/>
 				{!block.parentId && (
-					<>
-						<SubBlockToolbar
-							isOpen={openSubBlockId === block.id}
-							onToggle={() => toggleSubBlockMenu(block.id)}
-							onClose={() => setOpenSubBlockId(null)}
-							onAddBlock={(type) => handleClickSub(block, type)}
-						/>
-					</>
+					<SubBlockToolbar
+						isOpen={openSubBlockId === block.id}
+						onToggle={() => toggleSubBlockMenu(block.id)}
+						onClose={() => setOpenSubBlockId(null)}
+						onAddBlock={(type) => handleClickSub(block, type)}
+					/>
 				)}
 				<button
 					type="button"
 					onClick={() => onDeleteBlock(noteId, block.id)}
-					className="h-9 shrink-0 rounded-full px-3 text-slate-300 transition hover:bg-red-50 hover:text-red-500"
+					className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-pink-100 text-pink-600 transition hover:bg-pink-50"
 					aria-label="Delete block"
 				>
 					<Trash2 size={16} />

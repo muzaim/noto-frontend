@@ -18,13 +18,19 @@ export default function CreateNoteModal({
 	onSubmit,
 }: Props) {
 	const [title, setTitle] = useState<string>(initialTitle ?? "");
-
+	const [error, setError] = useState("");
 	if (!isOpen) return null;
 
 	const handleFormSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!title.trim()) return;
+		if (!title.trim()) {
+			setError("Judul note wajib diisi");
+
+			return;
+		}
+
+		setError("");
 
 		if (noteId) {
 			await updateNoteApi(noteId, {
@@ -71,10 +77,21 @@ export default function CreateNoteModal({
 						<input
 							type="text"
 							value={title}
-							onChange={(e) => setTitle(e.target.value)}
+							onChange={(e) => {
+								setTitle(e.target.value);
+
+								if (error) {
+									setError("");
+								}
+							}}
 							placeholder="Masukkan judul note..."
 							className="mt-2 w-full rounded-xl border border-sky-100 px-4 py-3 text-sm outline-none transition placeholder:text-slate-300 focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
 						/>
+						{error && (
+							<p className="mt-2 text-sm font-medium text-red-500">
+								{error}
+							</p>
+						)}
 					</label>
 
 					<div className="mt-6 flex justify-end gap-2">
