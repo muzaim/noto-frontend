@@ -65,6 +65,11 @@ Create a `.env` file
 VITE_API_URL=http://localhost:8181/api/v1
 ```
 
+Or you can copy the `.env.example` file
+```bash
+cp .env.exampe .env
+```
+
 ---
 
 # Run Project
