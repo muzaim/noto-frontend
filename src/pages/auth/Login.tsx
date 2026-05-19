@@ -85,7 +85,7 @@ export default function Login() {
 					to="/register"
 					className="font-medium text-sky-600 hover:text-sky-700"
 				>
-					Register
+					Register By Reza
 				</Link>
 			</p>
 		</AuthLayout>
