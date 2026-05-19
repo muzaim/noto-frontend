@@ -67,7 +67,7 @@ export default function Register() {
 			</AuthFormCard>
 
 			<p className="mt-5 text-center text-sm text-slate-500">
-				Sudah punya akun?{" "}
+				Sudah punya akun bro?{" "}
 				<Link
 					to="/login"
 					className="font-medium text-sky-600 hover:text-sky-700"
